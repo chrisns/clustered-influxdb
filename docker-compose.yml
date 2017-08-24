@@ -37,7 +37,7 @@ services:
       - MQTT_HOST=${MQTT_HOST}
       - MQTT_USER=${MQTT_USER}
       - MQTT_PASS=${MQTT_PASS}
-      - TOPICS="$share/telegraf/zwave/#",
+      - TOPICS="$$share/telegraf/zwave/#",
       - TAG_KEYS="name","stype"
 
   telegraf-docker:
