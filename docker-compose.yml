@@ -1,0 +1,62 @@
+version: "3"
+services:
+  influxdb:
+    networks:
+      influx:
+    volumes:
+      - data:/var/lib/influxdb
+    deploy:
+      replicas: 1
+    image: influxdb:alpine
+
+  chronograf:
+    networks:
+      influx:
+      proxy:
+    command: "chronograf --influxdb-url=http://influxdb:8086"
+    deploy:
+      replicas: 1
+      labels:
+        - com.df.notify=true
+        - com.df.distribute=true
+        - com.df.serviceDomain=chronograf.p.cns.me
+        - com.df.servicePath=/
+        - com.df.port=8888
+        - com.df.httpsOnly=true
+        - com.df.xForwardedProto=true
+    image: chronograf:alpine
+
+  telegraf-mqtt:
+    networks:
+      influx:
+    deploy:
+      replicas: 1
+    image: pinked/docker-telegraf-mqtt
+    environment:
+      - INFLUX=http://influxdb:8086
+      - MQTT_HOST=${MQTT_HOST}
+      - MQTT_USER=${MQTT_USER}
+      - MQTT_PASS=${MQTT_PASS}
+      - TOPICS="$share/telegraf/zwave/#",
+      - TAG_KEYS="name","stype"
+
+  telegraf-docker:
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      influx:
+    deploy:
+      mode: global
+    image: pinked/docker-telegraf-docker
+    environment:
+      - INFLUX=http://influxdb:8086
+
+networks:
+  influx:
+    external: false
+  proxy:
+    external: true
+
+volumes:
+  data:
+    driver: glusterfs
