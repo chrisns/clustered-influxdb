@@ -37,8 +37,8 @@ services:
       - MQTT_HOST=${MQTT_HOST}
       - MQTT_USER=${MQTT_USER}
       - MQTT_PASS=${MQTT_PASS}
-      - TOPICS="zwave/#", "alarm/zones/", "alarm/status", "alarm/connected", "alarm/state",
-      - TAG_KEYS="name","stype","description","dtype","id","svalue1","switchType","location","troubles"
+      - TOPICS="zwave/#", "alarm/zones/", "alarm/status", "alarm/connected", "alarm/state", "prowl/remaining",
+      - TAG_KEYS="name","stype","description","dtype","id","switchType","location","troubles"
 
   telegraf-docker:
     volumes:
