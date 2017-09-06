@@ -1,6 +1,8 @@
 version: "3"
 services:
   influxdb:
+    healthcheck:
+      test: "wget -q -O /dev/null http://localhost:8086/ping || exit 1"
     labels:
       - com.df.notify=true
       - com.df.distribute=true
@@ -22,6 +24,8 @@ services:
       influx:
       proxy:
     command: "chronograf --influxdb-url=http://influxdb:8086"
+    healthcheck:
+      test: "wget -q -O /dev/null http://localhost:8888/ping || exit 1"
     volumes:
       - chronograf:/var/lib/chronograf
     deploy:
@@ -41,9 +45,10 @@ services:
       influx:
       proxy:
     volumes:
-      - chronograf:/var/lib/chronograf
       - grafana_db:/var/lib/grafana
       - grafana_config:/etc/grafana
+    healthcheck:
+      test: "curl -s -o /dev/null http://localhost:3000/ping || exit 1"
     deploy:
       replicas: 1
       labels:
